@@ -1,4 +1,4 @@
-module github.com/kanmu/dgw
+module github.com/miyataka/dgw
 
 go 1.15
 
