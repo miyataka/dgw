@@ -7,13 +7,14 @@ import (
 	"database/sql"
 	"fmt"
 	"go/format"
-	"io/ioutil"
+	"os"
 	"sort"
 	"strings"
 	"text/template"
 
 	"github.com/BurntSushi/toml"
 	"github.com/achiku/varfmt"
+	"github.com/gertd/go-pluralize"
 	_ "github.com/lib/pq" // postgres
 	"github.com/pkg/errors"
 )
@@ -283,8 +284,13 @@ func PgColToField(col *PgColumn, typeCfg *PgTypeMapConfig) (*StructField, error)
 // PgTableToStruct converts table def to go struct
 func PgTableToStruct(t *PgTable, typeCfg *PgTypeMapConfig, keyConfig *AutoKeyMap) (*Struct, error) {
 	t.setPrimaryKeyInfo(keyConfig)
+	name := t.Name
+	pluralize := pluralize.NewClient()
+	if pluralize.IsPlural(t.Name) {
+		name = pluralize.Singular(t.Name)
+	}
 	s := &Struct{
-		Name:  varfmt.PublicVarName(t.Name),
+		Name:  varfmt.PublicVarName(name),
 		Table: t,
 	}
 	var fs []*StructField
@@ -369,7 +375,7 @@ func PgCreateStruct(
 			return src, errors.WithStack(err)
 		}
 		if customTmpl != "" {
-			tmpl, err := ioutil.ReadFile(customTmpl)
+			tmpl, err := os.ReadFile(customTmpl)
 			if err != nil {
 				return nil, err
 			}

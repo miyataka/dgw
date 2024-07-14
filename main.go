@@ -10,10 +10,8 @@ import (
 )
 
 var (
-	connStr = kingpin.Arg(
-		"conn", "PostgreSQL connection string in URL format").Required().String()
-	schema = kingpin.Flag(
-		"schema", "PostgreSQL schema name").Default("public").Short('s').String()
+	connStr          = kingpin.Arg("conn", "PostgreSQL connection string in URL format").Required().String()
+	schema           = kingpin.Flag("schema", "PostgreSQL schema name").Default("public").Short('s').String()
 	pkgName          = kingpin.Flag("package", "package name").Default("main").Short('p').String()
 	typeMapFilePath  = kingpin.Flag("typemap", "column type and go type map file path").Short('t').String()
 	exTbls           = kingpin.Flag("exclude", "table names to exclude").Short('x').Strings()
